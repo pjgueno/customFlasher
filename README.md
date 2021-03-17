@@ -1,5 +1,12 @@
 # Sensor.Community flashing tool
 
+
+## Modified flasher to burn the Wifi credentials at once.
+
+Everything should be in airroht-flasher.py
+spiffsgen.py was added to try but not in use.
+
+
 ## Binary builds and downloads
 
 Our main target is having working prebuilt binaries for users to simply download and run, to avoid all the setup below.

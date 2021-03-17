@@ -24,9 +24,9 @@ from gui import mainwindow
 from airrohrFlasher.consts import UPDATE_REPOSITORY, ALLOWED_PROTO, \
     PREFERED_PORTS, ROLE_DEVICE, DRIVERS_URL
 
-import spiffsGen
-from spiffsGen import spiffsgen
-from spiffsgen import _____________
+#import spiffsGen
+#from spiffsGen import spiffsgen
+#from spiffsgen import _____________
 
 if getattr(sys, 'frozen', False):
     RESOURCES_PATH = sys._MEIPASS
@@ -204,6 +204,9 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
             return False
         return True
 
+
+        #Credentials saver
+
     def on_wifiButton_clicked(self):
 
         self.statusbar.clearMessage()
@@ -253,6 +256,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
             #python spiffsgen.py <image_size> <base_dir> <output_file>.
 
 
+        #Config writer
 
     def write_config(self, progress, device, spiffs, baudrate=460800):
 
