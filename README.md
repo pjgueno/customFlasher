@@ -6,6 +6,8 @@
 Everything should be in airroht-flasher.py
 spiffsgen.py was added to try but not in use.
 
+![Modified GUI](images/modified_GUI.png)
+
 
 ## Binary builds and downloads
 
