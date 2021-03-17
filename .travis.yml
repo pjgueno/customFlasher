@@ -1,0 +1,34 @@
+os:
+  - linux
+
+language:
+  - python
+
+python:
+  - "3.6"
+
+sudo: true
+
+before_install:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa &&
+      sudo apt-get update -qq &&
+      sudo apt-get install -qq qtbase5-dev qtdeclarative5-dev libqt5webkit5-dev  &&
+      sudo apt-get install qttools5-dev-tools make
+    ;
+    fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      curl -Lo "/tmp/python-3.6.9-macosx10.6.pkg" -C - "https://www.python.org/ftp/python/3.6.9/python-3.6.9-macosx10.6.pkg" && sudo installer -pkg "/tmp/python-3.6.9-macosx10.6.pkg" -target /Library/Frameworks/Python.framework/Versions/3.6
+      export PATH="$HOME/Qt/5.11.1/clang_64/bin:/Library/Frameworks/Python.framework/Versions/3.6/bin:$PATH"
+    ;
+    fi
+
+script:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      make deps dist
+    ;
+    fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      make deps dmg
+    ;
+    fi
