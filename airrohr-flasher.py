@@ -235,7 +235,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
 
         jsonPart1 = '{"SOFTWARE_VERSION":"NRZ-2020-133","current_lang":"FR","wlanssid":"'
         jsonPart2 = '","wlanpwd":"'
-        jsonPart3 = '","www_username":"admin","www_password":"","fs_ssid":"airRohr-2509507","fs_pwd":"","www_basicauth_enabled":false,"dht_read":false,"htu21d_read":false,"ppd_read":false,"sds_read":false,"pms_read":true,"hpm_read":false,"npm_read":false,"sps30_read":false,"bmp_read":false,"bmx280_read":true,"sht3x_read":false,"ds18b20_read":false,"dnms_read":false,"dnms_correction":"0.0","temp_correction":"0.0","gps_read":false,"send2dusti":true,"ssl_dusti":false,"send2madavi":true,"ssl_madavi":false,"send2sensemap":false,"send2fsapp":false,"send2aircms":false,"send2csv":false,"auto_update":true,"use_beta":false,"has_display":false,"has_sh1106":false,"has_flipped_display":false,"has_lcd1602":false,"has_lcd1602_27":true,"has_lcd2004":false,"has_lcd2004_27":false,"display_wifi_info":true,"display_device_info":true,"debug":3,"sending_intervall_ms":145000,"time_for_wifi_config":600000,"senseboxid":"","send2custom":false,"host_custom":"192.168.234.1","url_custom":"/data.php","port_custom":80,"user_custom":"","pwd_custom":"","ssl_custom":false,"send2influx":false,"host_influx":"influx.server","url_influx":"/write?db=sensorcommunity","port_influx":8086,"user_influx":"","pwd_influx":"","measurement_name_influx":"feinstaub","ssl_influx":false}'
+        jsonPart3 = '","www_username":"admin","www_password":"","fs_ssid":"airRohr-2509507","fs_pwd":"","www_basicauth_enabled":false,"dht_read":false,"htu21d_read":false,"ppd_read":false,"sds_read":true,"pms_read":false,"hpm_read":false,"npm_read":false,"sps30_read":false,"bmp_read":false,"bmx280_read":true,"sht3x_read":false,"ds18b20_read":false,"dnms_read":false,"dnms_correction":"0.0","temp_correction":"0.0","gps_read":false,"send2dusti":true,"ssl_dusti":false,"send2madavi":true,"ssl_madavi":false,"send2sensemap":false,"send2fsapp":false,"send2aircms":false,"send2csv":false,"auto_update":true,"use_beta":false,"has_display":false,"has_sh1106":false,"has_flipped_display":false,"has_lcd1602":false,"has_lcd1602_27":true,"has_lcd2004":false,"has_lcd2004_27":false,"display_wifi_info":true,"display_device_info":true,"debug":3,"sending_intervall_ms":145000,"time_for_wifi_config":600000,"senseboxid":"","send2custom":false,"host_custom":"192.168.234.1","url_custom":"/data.php","port_custom":80,"user_custom":"","pwd_custom":"","ssl_custom":false,"send2influx":false,"host_influx":"influx.server","url_influx":"/write?db=sensorcommunity","port_influx":8086,"user_influx":"","pwd_influx":"","measurement_name_influx":"feinstaub","ssl_influx":false}'
         jsonTest = jsonPart1 + ssid + jsonPart2 + pw + jsonPart3
         
         if not self.is_json(jsonTest):
@@ -299,29 +299,16 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
                     chip_type=esp.get_chip_description()), 0)
         esp = esp.run_stub()
         esp.change_baud(baudrate)
-        #esp.connect()
-        # esp.write_flash(0x300000, spiffs)
-        # progress.emit(self.tr('Config written!'), 100)
-
-        #with open(spiffs, 'rb') as fd:
-            #uncimagespiffs = fd.read()
-
 
         with open(path, 'rb') as fd:
             uncimagespiffs = fd.read()
 
         imagespiffs = zlib.compress(uncimagespiffs, 0)
 
-        address = 0x300000
+        #address = 0x300000
+        address = 0x100000
         #address = 0x0
         blocks = esp.flash_defl_begin(len(uncimagespiffs), len(imagespiffs), address)
-
-
-            # ( '.menu.ESPModule.ESP12.build.spiffs_start', '0x300000' ),
-            # ( '.menu.ESPModule.ESP12.build.spiffs_end', '0x3FB000' ),
-            # ( '.menu.ESPModule.ESP12.build.spiffs_blocksize', '8192' ),
-            # ( '.menu.ESPModule.ESP12.build.spiffs_pagesize', '256' ),
-            # ( '.menu.ESPModule.ESP12.upload.maximum_size', '1044464' ),
 
         seq = 0
         written = 0
