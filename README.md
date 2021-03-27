@@ -3,9 +3,7 @@
 
 ## Modified flasher to burn the Wifi credentials at once.
 
-Everything should be in airrohr-flasher.py
-
-spiffsgen.py was added to try but not in use.
+spiffsgen.py added and kindly modified by @DeeKey
 
 ![Modified GUI](images/modified_GUI.png)
 
@@ -164,4 +162,3 @@ Manual translation can be done by editing the .ts file.
 In order to rebuild `*.ts` files use:
 
     make i18n-update
-# customFlasher
