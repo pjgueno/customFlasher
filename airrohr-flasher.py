@@ -93,6 +93,124 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         print(self.cachedirspiffs.name)
 
 
+        self.sensorsList = ["SDS011","BME280"]
+        self.populate_sensors1(self.sensorsList)
+        self.populate_sensors2(self.sensorsList)
+
+
+        self.sensor1Box.setCurrentIndex(0)
+        self.sensor2Box.setCurrentIndex(1)
+
+        self.customName.setPlaceholderText("Default = airRohr")
+
+        self.wifiSSID.setPlaceholderText("Please double check...")
+        self.wifiPW.setPlaceholderText("Please double check...")
+
+        configstring = '{"SOFTWARE_VERSION":"","current_lang":"","wlanssid":"","wlanpwd":"","www_username":"admin","www_password":"","fs_ssid":"","fs_pwd":"","www_basicauth_enabled":false,"dht_read":false,"htu21d_read":false,"ppd_read":false,"sds_read":false,"pms_read":false,"hpm_read":false,"npm_read":false,"sps30_read":false,"bmp_read":false,"bmx280_read":false,"sht3x_read":false,"ds18b20_read":false,"dnms_read":false,"dnms_correction":"0.0","temp_correction":"0.0","gps_read":false,"send2dusti":true,"ssl_dusti":false,"send2madavi":true,"ssl_madavi":false,"send2sensemap":false,"send2fsapp":false,"send2aircms":false,"send2csv":false,"auto_update":true,"use_beta":false,"has_display":false,"has_sh1106":false,"has_flipped_display":false,"has_lcd1602":false,"has_lcd1602_27":false,"has_lcd2004":false,"has_lcd2004_27":false,"display_wifi_info":true,"display_device_info":true,"debug":3,"sending_intervall_ms":145000,"time_for_wifi_config":600000,"senseboxid":"","send2custom":false,"host_custom":"192.168.234.1","url_custom":"/data.php","port_custom":80,"user_custom":"","pwd_custom":"","ssl_custom":false,"send2influx":false,"host_influx":"influx.server","url_influx":"/write?db=sensorcommunity","port_influx":8086,"user_influx":"","pwd_influx":"","measurement_name_influx":"feinstaub","ssl_influx":false}'
+        self.configjson = json.loads(self.configstring)
+
+        self.sensorID = 0
+
+
+# configshape_in = """
+# String		current_lang
+# String		wlanssid
+# Password		wlanpwd
+# String		www_username
+# Password		www_password
+# String		fs_ssid
+# Password		fs_pwd
+# Bool		www_basicauth_enabled
+# Bool		dht_read
+# Bool		htu21d_read
+# Bool		ppd_read
+# Bool		sds_read
+# Bool		pms_read
+# Bool		hpm_read
+# Bool		npm_read
+# Bool		sps30_read
+# Bool		bmp_read
+# Bool		bmx280_read
+# Bool		sht3x_read
+# Bool		ds18b20_read
+# Bool		dnms_read
+# String		dnms_correction
+# String		temp_correction
+# Bool		gps_read
+# Bool		send2dusti
+# Bool		ssl_dusti
+# Bool		send2madavi
+# Bool		ssl_madavi
+# Bool		send2sensemap
+# Bool		send2fsapp
+# Bool		send2aircms
+# Bool		send2csv
+# Bool		auto_update
+# Bool		use_beta
+# Bool		has_display
+# Bool		has_sh1106
+# Bool		has_flipped_display
+# Bool		has_lcd1602
+# Bool		has_lcd1602_27
+# Bool		has_lcd2004
+# Bool		has_lcd2004_27
+# Bool		display_wifi_info
+# Bool		display_device_info
+# UInt		debug
+# Time		sending_intervall_ms
+# Time		time_for_wifi_config
+# String		senseboxid
+# Bool		send2custom
+# String		host_custom
+# String		url_custom
+# UInt		port_custom
+# String		user_custom
+# Password		pwd_custom
+# Bool		ssl_custom
+# Bool		send2influx
+# String		host_influx
+# String		url_influx
+# UInt		port_influx
+# String		user_influx
+# Password		pwd_influx
+# String		measurement_name_influx
+# Bool		ssl_influx
+# """
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # def populate_sensors1(self, sensors):
+    #     for sensor in sensors:
+    #         item = QtGui.QStandardItem(sensor)
+    #         #item.setData(UPDATE_REPOSITORY + fname, ROLE_DEVICE)
+    #         self.sensor1Box.model().appendRow(item)
+    
+    # def populate_sensors2(self, sensors):
+    #     for sensor in sensors:
+    #         item = QtGui.QStandardItem(sensor)
+    #         #item.setData(UPDATE_REPOSITORY + fname, ROLE_DEVICE)
+    #         self.sensor2Box.model().appendRow(item)
+
+
+# class SensorsListThread(QuickThread):
+#     listLoaded = QtCore.Signal([list])
+
+#     def target(self):
+#         """Downloads list of available firmware updates in separate thread."""
+#         self.listLoaded.emit(list(indexof(UPDATE_REPOSITORY)))
+
+
+
 
 
     def show_global_message(self, title, message):
@@ -153,6 +271,19 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
 
         self.statusbar.clearMessage()
 
+
+    def populate_sensors1(self, sensors):
+        for sensor in sensors:
+            item = QtGui.QStandardItem(sensor)
+            #item.setData(UPDATE_REPOSITORY + fname, ROLE_DEVICE)
+            self.sensor1Box.model().appendRow(item)
+    
+    def populate_sensors2(self, sensors):
+        for sensor in sensors:
+            item = QtGui.QStandardItem(sensor)
+            #item.setData(UPDATE_REPOSITORY + fname, ROLE_DEVICE)
+            self.sensor2Box.model().appendRow(item)
+
     def populate_boards(self, ports):
         """Populates board selection combobox from list of pyserial
         ListPortInfo objects"""
@@ -181,6 +312,9 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
                             'the drivers</a>?').format(drivers_url=DRIVERS_URL))
         else:
             self.globalMessage.hide()
+            self.sensorID = esp.chip_id())
+            self.configjson['fs_ssid'] = "airRohr-" + str(self.sensorID)
+            print(self.configjson['fs_ssid'])
             self.boards_detected = True
 
         if others:
