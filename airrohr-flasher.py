@@ -106,8 +106,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         self.wifiSSID.setPlaceholderText("Please double check...")
         self.wifiPW.setPlaceholderText("Please double check...")
 
-        configstring = '{"SOFTWARE_VERSION":"","current_lang":"","wlanssid":"","wlanpwd":"","www_username":"admin","www_password":"","fs_ssid":"","fs_pwd":"","www_basicauth_enabled":false,"dht_read":false,"htu21d_read":false,"ppd_read":false,"sds_read":false,"pms_read":false,"hpm_read":false,"npm_read":false,"sps30_read":false,"bmp_read":false,"bmx280_read":false,"sht3x_read":false,"ds18b20_read":false,"dnms_read":false,"dnms_correction":"0.0","temp_correction":"0.0","gps_read":false,"send2dusti":true,"ssl_dusti":false,"send2madavi":true,"ssl_madavi":false,"send2sensemap":false,"send2fsapp":false,"send2aircms":false,"send2csv":false,"auto_update":true,"use_beta":false,"has_display":false,"has_sh1106":false,"has_flipped_display":false,"has_lcd1602":false,"has_lcd1602_27":false,"has_lcd2004":false,"has_lcd2004_27":false,"display_wifi_info":true,"display_device_info":true,"debug":3,"sending_intervall_ms":145000,"time_for_wifi_config":600000,"senseboxid":"","send2custom":false,"host_custom":"192.168.234.1","url_custom":"/data.php","port_custom":80,"user_custom":"","pwd_custom":"","ssl_custom":false,"send2influx":false,"host_influx":"influx.server","url_influx":"/write?db=sensorcommunity","port_influx":8086,"user_influx":"","pwd_influx":"","measurement_name_influx":"feinstaub","ssl_influx":false}'
-        self.configjson = json.loads(self.configstring)
+        self.configjson = json.loads('{}')
 
         self.sensorID = 0
 
@@ -312,7 +311,8 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
                             'the drivers</a>?').format(drivers_url=DRIVERS_URL))
         else:
             self.globalMessage.hide()
-            self.sensorID = esp.chip_id())
+            esp = ESPLoader.detect_chip(self.boardBox.currentData(ROLE_DEVICE), min(ESPLoader.ESP_ROM_BAUD, 460800), 'default_reset', False)
+            self.sensorID = esp.chip_id()
             self.configjson['fs_ssid'] = "airRohr-" + str(self.sensorID)
             print(self.configjson['fs_ssid'])
             self.boards_detected = True
@@ -350,14 +350,68 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
 
         #Credentials saver
 
+
+    def switcher(self, value):
+        if value == "DHT22":
+            self.configjson['dht_read'] = True
+        if value == "PPD42":
+            self.configjson['ppd_read'] = True
+        if value == "SDS011":
+            self.configjson['sds_read'] = True
+        if value == "PMSx003":
+            self.configjson['pms_read'] = True
+        if value == "HPM":
+            self.configjson['hpm_read'] = True
+        if value == "NPM":
+            self.configjson['npm_read'] = True
+        if value == "SPS30":
+            self.configjson['sps30_read'] = True
+        if value == "BMP":
+            self.configjson['bmp_read'] = True
+        if value == "BMX280":
+            self.configjson['bmx280_read'] = True
+        if value == "SHT3X":
+            self.configjson['sht3x_read'] = True
+        if value == "DS18B20":
+            self.configjson['ds18b20_read'] = True
+        if value == "Noise":
+            self.configjson['dnms_read'] = True
+        else:
+            self.statusbar.showMessage(self.tr("Invalid sensor name."))
+            return
+
+
+#     config = {"dht_read":false,
+# "htu21d_read":false,
+# "ppd_read":false,
+# "sds_read":true,
+# "pms_read":false,
+# "hpm_read":false,
+# "npm_read":false,
+# "sps30_read":false,
+# "bmp_read":false,
+# "bmx280_read":true,
+# "sht3x_read":false,
+# "ds18b20_read":false,
+# "dnms_read":false}
+
+
+
+
     @QtCore.Slot()
 
     def on_wifiButton_clicked(self):
 
         self.statusbar.clearMessage()
 
+        configstring = '{"SOFTWARE_VERSION":"","current_lang":"","wlanssid":"","wlanpwd":"","www_username":"admin","www_password":"","fs_ssid":"","fs_pwd":"","www_basicauth_enabled":false,"dht_read":false,"htu21d_read":false,"ppd_read":false,"sds_read":false,"pms_read":false,"hpm_read":false,"npm_read":false,"sps30_read":false,"bmp_read":false,"bmx280_read":false,"sht3x_read":false,"ds18b20_read":false,"dnms_read":false,"dnms_correction":"0.0","temp_correction":"0.0","gps_read":false,"send2dusti":true,"ssl_dusti":false,"send2madavi":true,"ssl_madavi":false,"send2sensemap":false,"send2fsapp":false,"send2aircms":false,"send2csv":false,"auto_update":true,"use_beta":false,"has_display":false,"has_sh1106":false,"has_flipped_display":false,"has_lcd1602":false,"has_lcd1602_27":false,"has_lcd2004":false,"has_lcd2004_27":false,"display_wifi_info":true,"display_device_info":true,"debug":3,"sending_intervall_ms":145000,"time_for_wifi_config":600000,"senseboxid":"","send2custom":false,"host_custom":"192.168.234.1","url_custom":"/data.php","port_custom":80,"user_custom":"","pwd_custom":"","ssl_custom":false,"send2influx":false,"host_influx":"influx.server","url_influx":"/write?db=sensorcommunity","port_influx":8086,"user_influx":"","pwd_influx":"","measurement_name_influx":"feinstaub","ssl_influx":false}'
+        self.configjson = json.loads(configstring)
+
         ssid = self.wifiSSID.text()
         pw = self.wifiPW.text()
+        apssid = self.customName.text()
+        sensor1 = self.sensorsList[self.sensor1Box.currentIndex()]
+        sensor2 = self.sensorsList[self.sensor2Box.currentIndex()] 
 
         if not ssid:
             self.statusbar.showMessage(self.tr("No SSID typed."))
@@ -367,16 +421,32 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
             self.statusbar.showMessage(self.tr("No PW type."))
             return
 
-        jsonPart1 = '{"SOFTWARE_VERSION":"NRZ-2020-133","current_lang":"FR","wlanssid":"'
-        jsonPart2 = '","wlanpwd":"'
-        jsonPart3 = '","www_username":"admin","www_password":"","fs_ssid":"airRohr-2509507","fs_pwd":"","www_basicauth_enabled":false,"dht_read":false,"htu21d_read":false,"ppd_read":false,"sds_read":true,"pms_read":false,"hpm_read":false,"npm_read":false,"sps30_read":false,"bmp_read":false,"bmx280_read":true,"sht3x_read":false,"ds18b20_read":false,"dnms_read":false,"dnms_correction":"0.0","temp_correction":"0.0","gps_read":false,"send2dusti":true,"ssl_dusti":false,"send2madavi":true,"ssl_madavi":false,"send2sensemap":false,"send2fsapp":false,"send2aircms":false,"send2csv":false,"auto_update":true,"use_beta":false,"has_display":false,"has_sh1106":false,"has_flipped_display":false,"has_lcd1602":false,"has_lcd1602_27":true,"has_lcd2004":false,"has_lcd2004_27":false,"display_wifi_info":true,"display_device_info":true,"debug":3,"sending_intervall_ms":145000,"time_for_wifi_config":600000,"senseboxid":"","send2custom":false,"host_custom":"192.168.234.1","url_custom":"/data.php","port_custom":80,"user_custom":"","pwd_custom":"","ssl_custom":false,"send2influx":false,"host_influx":"influx.server","url_influx":"/write?db=sensorcommunity","port_influx":8086,"user_influx":"","pwd_influx":"","measurement_name_influx":"feinstaub","ssl_influx":false}'
-        jsonTest = jsonPart1 + ssid + jsonPart2 + pw + jsonPart3
+        if sensor1 == sensor2:
+            self.statusbar.showMessage(self.tr("2 times the same sensor."))
+            return
+
+        if apssid:
+            self.configjson['fs_ssid'] = apssid + "-" + str(self.sensorID)
+            print(self.configjson['fs_ssid'])
+
+        self.switcher(sensor1)
+        self.switcher(sensor2)
+
+        self.configjson['wlanssid'] = ssid
+        self.configjson['wlanpw'] = pw
+
+        jsonTest = json.dumps(self.configjson)
+
+        # jsonPart1 = '{"SOFTWARE_VERSION":"NRZ-2020-133","current_lang":"FR","wlanssid":"'
+        # jsonPart2 = '","wlanpwd":"'
+        # jsonPart3 = '","www_username":"admin","www_password":"","fs_ssid":"airRohr-2509507","fs_pwd":"","www_basicauth_enabled":false,"dht_read":false,"htu21d_read":false,"ppd_read":false,"sds_read":true,"pms_read":false,"hpm_read":false,"npm_read":false,"sps30_read":false,"bmp_read":false,"bmx280_read":true,"sht3x_read":false,"ds18b20_read":false,"dnms_read":false,"dnms_correction":"0.0","temp_correction":"0.0","gps_read":false,"send2dusti":true,"ssl_dusti":false,"send2madavi":true,"ssl_madavi":false,"send2sensemap":false,"send2fsapp":false,"send2aircms":false,"send2csv":false,"auto_update":true,"use_beta":false,"has_display":false,"has_sh1106":false,"has_flipped_display":false,"has_lcd1602":false,"has_lcd1602_27":true,"has_lcd2004":false,"has_lcd2004_27":false,"display_wifi_info":true,"display_device_info":true,"debug":3,"sending_intervall_ms":145000,"time_for_wifi_config":600000,"senseboxid":"","send2custom":false,"host_custom":"192.168.234.1","url_custom":"/data.php","port_custom":80,"user_custom":"","pwd_custom":"","ssl_custom":false,"send2influx":false,"host_influx":"influx.server","url_influx":"/write?db=sensorcommunity","port_influx":8086,"user_influx":"","pwd_influx":"","measurement_name_influx":"feinstaub","ssl_influx":false}'
+        # jsonTest = jsonPart1 + ssid + jsonPart2 + pw + jsonPart3
         
         if not self.is_json(jsonTest):
             self.statusbar.showMessage(self.tr("Created invalid json."))
             return
         else:
-            self.jsonFinal = jsonPart1 + ssid + jsonPart2 + pw + jsonPart3
+            self.jsonFinal = json.dumps(self.configjson)
             self.statusbar.showMessage(self.tr("Created valid json."))
             print(self.jsonFinal)
             
@@ -422,6 +492,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
             
             self.write_config(self.uploadProgress, device, self.cachedirspiffs.name + "/spiffs.bin")
 
+    @QtCore.Slot()
 
     def write_config(self, progress, device, path, baudrate=460800):
 
