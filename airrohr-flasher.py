@@ -34,7 +34,6 @@ if getattr(sys, 'frozen', False):
 else:
     RESOURCES_PATH = os.path.dirname(os.path.realpath(__file__))
 
-
 class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
     uploadProgress = QtCore.Signal([str, int])
     errorSignal = QtCore.Signal([str])
@@ -92,11 +91,9 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         print(self.cachedirjson.name)
         print(self.cachedirspiffs.name)
 
-
         self.sensorsList = ["SDS011","BME280"]
         self.populate_sensors1(self.sensorsList)
         self.populate_sensors2(self.sensorsList)
-
 
         self.sensor1Box.setCurrentIndex(0)
         self.sensor2Box.setCurrentIndex(1)
@@ -107,110 +104,70 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         self.wifiPW.setPlaceholderText("Please double check...")
 
         self.configjson = json.loads('{}')
-
         self.sensorID = 0
 
-
-# configshape_in = """
-# String		current_lang
-# String		wlanssid
-# Password		wlanpwd
-# String		www_username
-# Password		www_password
-# String		fs_ssid
-# Password		fs_pwd
-# Bool		www_basicauth_enabled
-# Bool		dht_read
-# Bool		htu21d_read
-# Bool		ppd_read
-# Bool		sds_read
-# Bool		pms_read
-# Bool		hpm_read
-# Bool		npm_read
-# Bool		sps30_read
-# Bool		bmp_read
-# Bool		bmx280_read
-# Bool		sht3x_read
-# Bool		ds18b20_read
-# Bool		dnms_read
-# String		dnms_correction
-# String		temp_correction
-# Bool		gps_read
-# Bool		send2dusti
-# Bool		ssl_dusti
-# Bool		send2madavi
-# Bool		ssl_madavi
-# Bool		send2sensemap
-# Bool		send2fsapp
-# Bool		send2aircms
-# Bool		send2csv
-# Bool		auto_update
-# Bool		use_beta
-# Bool		has_display
-# Bool		has_sh1106
-# Bool		has_flipped_display
-# Bool		has_lcd1602
-# Bool		has_lcd1602_27
-# Bool		has_lcd2004
-# Bool		has_lcd2004_27
-# Bool		display_wifi_info
-# Bool		display_device_info
-# UInt		debug
-# Time		sending_intervall_ms
-# Time		time_for_wifi_config
-# String		senseboxid
-# Bool		send2custom
-# String		host_custom
-# String		url_custom
-# UInt		port_custom
-# String		user_custom
-# Password		pwd_custom
-# Bool		ssl_custom
-# Bool		send2influx
-# String		host_influx
-# String		url_influx
-# UInt		port_influx
-# String		user_influx
-# Password		pwd_influx
-# String		measurement_name_influx
-# Bool		ssl_influx
-# """
-
-
-
-
-
-
-
-
-
-
-
-
-
-    # def populate_sensors1(self, sensors):
-    #     for sensor in sensors:
-    #         item = QtGui.QStandardItem(sensor)
-    #         #item.setData(UPDATE_REPOSITORY + fname, ROLE_DEVICE)
-    #         self.sensor1Box.model().appendRow(item)
-    
-    # def populate_sensors2(self, sensors):
-    #     for sensor in sensors:
-    #         item = QtGui.QStandardItem(sensor)
-    #         #item.setData(UPDATE_REPOSITORY + fname, ROLE_DEVICE)
-    #         self.sensor2Box.model().appendRow(item)
-
-
-# class SensorsListThread(QuickThread):
-#     listLoaded = QtCore.Signal([list])
-
-#     def target(self):
-#         """Downloads list of available firmware updates in separate thread."""
-#         self.listLoaded.emit(list(indexof(UPDATE_REPOSITORY)))
-
-
-
-
+        # String		current_lang
+        # String		wlanssid
+        # Password		wlanpwd
+        # String		www_username
+        # Password		www_password
+        # String		fs_ssid
+        # Password		fs_pwd
+        # Bool		www_basicauth_enabled
+        # Bool		dht_read
+        # Bool		htu21d_read
+        # Bool		ppd_read
+        # Bool		sds_read
+        # Bool		pms_read
+        # Bool		hpm_read
+        # Bool		npm_read
+        # Bool		sps30_read
+        # Bool		bmp_read
+        # Bool		bmx280_read
+        # Bool		sht3x_read
+        # Bool		ds18b20_read
+        # Bool		dnms_read
+        # String		dnms_correction
+        # String		temp_correction
+        # Bool		gps_read
+        # Bool		send2dusti
+        # Bool		ssl_dusti
+        # Bool		send2madavi
+        # Bool		ssl_madavi
+        # Bool		send2sensemap
+        # Bool		send2fsapp
+        # Bool		send2aircms
+        # Bool		send2csv
+        # Bool		auto_update
+        # Bool		use_beta
+        # Bool		has_display
+        # Bool		has_sh1106
+        # Bool		has_flipped_display
+        # Bool		has_lcd1602
+        # Bool		has_lcd1602_27
+        # Bool		has_lcd2004
+        # Bool		has_lcd2004_27
+        # Bool		display_wifi_info
+        # Bool		display_device_info
+        # UInt		debug
+        # Time		sending_intervall_ms
+        # Time		time_for_wifi_config
+        # String		senseboxid
+        # Bool		send2custom
+        # String		host_custom
+        # String		url_custom
+        # UInt		port_custom
+        # String		user_custom
+        # Password		pwd_custom
+        # Bool		ssl_custom
+        # Bool		send2influx
+        # String		host_influx
+        # String		url_influx
+        # UInt		port_influx
+        # String		user_influx
+        # Password		pwd_influx
+        # String		measurement_name_influx
+        # Bool		ssl_influx
 
     def show_global_message(self, title, message):
         self.globalMessage.show()
@@ -269,7 +226,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
             self.versionBox.model().appendRow(item)
 
         self.statusbar.clearMessage()
-
 
     def populate_sensors1(self, sensors):
         for sensor in sensors:
@@ -339,7 +295,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
                 others.append(p)
         return prefered, others
 
-
     def is_json(self, myjson):
         try:
             json_object = json.loads(myjson)
@@ -347,66 +302,42 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
             return False
         return True
 
-
-        #Credentials saver
-
+        #Configuration saver
 
     def switcher(self, value):
         if value == "DHT22":
             self.configjson['dht_read'] = True
-        if value == "PPD42":
+        elif value == "PPD42":
             self.configjson['ppd_read'] = True
-        if value == "SDS011":
+        elif value == "SDS011":
             self.configjson['sds_read'] = True
-        if value == "PMSx003":
+        elif value == "PMSx003":
             self.configjson['pms_read'] = True
-        if value == "HPM":
+        elif value == "HPM":
             self.configjson['hpm_read'] = True
-        if value == "NPM":
+        elif value == "NPM":
             self.configjson['npm_read'] = True
-        if value == "SPS30":
+        elif value == "SPS30":
             self.configjson['sps30_read'] = True
-        if value == "BMP":
+        elif value == "BMP":
             self.configjson['bmp_read'] = True
-        if value == "BMX280":
+        elif value == "BME280":
             self.configjson['bmx280_read'] = True
-        if value == "SHT3X":
+        elif value == "SHT3X":
             self.configjson['sht3x_read'] = True
-        if value == "DS18B20":
+        elif value == "DS18B20":
             self.configjson['ds18b20_read'] = True
-        if value == "Noise":
+        elif value == "Noise":
             self.configjson['dnms_read'] = True
         else:
             self.statusbar.showMessage(self.tr("Invalid sensor name."))
             return
 
-
-#     config = {"dht_read":false,
-# "htu21d_read":false,
-# "ppd_read":false,
-# "sds_read":true,
-# "pms_read":false,
-# "hpm_read":false,
-# "npm_read":false,
-# "sps30_read":false,
-# "bmp_read":false,
-# "bmx280_read":true,
-# "sht3x_read":false,
-# "ds18b20_read":false,
-# "dnms_read":false}
-
-
-
-
     @QtCore.Slot()
-
     def on_wifiButton_clicked(self):
-
         self.statusbar.clearMessage()
-
         configstring = '{"SOFTWARE_VERSION":"","current_lang":"","wlanssid":"","wlanpwd":"","www_username":"admin","www_password":"","fs_ssid":"","fs_pwd":"","www_basicauth_enabled":false,"dht_read":false,"htu21d_read":false,"ppd_read":false,"sds_read":false,"pms_read":false,"hpm_read":false,"npm_read":false,"sps30_read":false,"bmp_read":false,"bmx280_read":false,"sht3x_read":false,"ds18b20_read":false,"dnms_read":false,"dnms_correction":"0.0","temp_correction":"0.0","gps_read":false,"send2dusti":true,"ssl_dusti":false,"send2madavi":true,"ssl_madavi":false,"send2sensemap":false,"send2fsapp":false,"send2aircms":false,"send2csv":false,"auto_update":true,"use_beta":false,"has_display":false,"has_sh1106":false,"has_flipped_display":false,"has_lcd1602":false,"has_lcd1602_27":false,"has_lcd2004":false,"has_lcd2004_27":false,"display_wifi_info":true,"display_device_info":true,"debug":3,"sending_intervall_ms":145000,"time_for_wifi_config":600000,"senseboxid":"","send2custom":false,"host_custom":"192.168.234.1","url_custom":"/data.php","port_custom":80,"user_custom":"","pwd_custom":"","ssl_custom":false,"send2influx":false,"host_influx":"influx.server","url_influx":"/write?db=sensorcommunity","port_influx":8086,"user_influx":"","pwd_influx":"","measurement_name_influx":"feinstaub","ssl_influx":false}'
         self.configjson = json.loads(configstring)
-
         ssid = self.wifiSSID.text()
         pw = self.wifiPW.text()
         apssid = self.customName.text()
@@ -436,11 +367,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         self.configjson['wlanpw'] = pw
 
         jsonTest = json.dumps(self.configjson)
-
-        # jsonPart1 = '{"SOFTWARE_VERSION":"NRZ-2020-133","current_lang":"FR","wlanssid":"'
-        # jsonPart2 = '","wlanpwd":"'
-        # jsonPart3 = '","www_username":"admin","www_password":"","fs_ssid":"airRohr-2509507","fs_pwd":"","www_basicauth_enabled":false,"dht_read":false,"htu21d_read":false,"ppd_read":false,"sds_read":true,"pms_read":false,"hpm_read":false,"npm_read":false,"sps30_read":false,"bmp_read":false,"bmx280_read":true,"sht3x_read":false,"ds18b20_read":false,"dnms_read":false,"dnms_correction":"0.0","temp_correction":"0.0","gps_read":false,"send2dusti":true,"ssl_dusti":false,"send2madavi":true,"ssl_madavi":false,"send2sensemap":false,"send2fsapp":false,"send2aircms":false,"send2csv":false,"auto_update":true,"use_beta":false,"has_display":false,"has_sh1106":false,"has_flipped_display":false,"has_lcd1602":false,"has_lcd1602_27":true,"has_lcd2004":false,"has_lcd2004_27":false,"display_wifi_info":true,"display_device_info":true,"debug":3,"sending_intervall_ms":145000,"time_for_wifi_config":600000,"senseboxid":"","send2custom":false,"host_custom":"192.168.234.1","url_custom":"/data.php","port_custom":80,"user_custom":"","pwd_custom":"","ssl_custom":false,"send2influx":false,"host_influx":"influx.server","url_influx":"/write?db=sensorcommunity","port_influx":8086,"user_influx":"","pwd_influx":"","measurement_name_influx":"feinstaub","ssl_influx":false}'
-        # jsonTest = jsonPart1 + ssid + jsonPart2 + pw + jsonPart3
         
         if not self.is_json(jsonTest):
             self.statusbar.showMessage(self.tr("Created invalid json."))
@@ -459,16 +385,9 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
             jsonfile.write(self.jsonFinal)
             jsonfile.close()
 
-            #self.cachedirspiffs = tempfile.TemporaryDirectory()
-
-            #python3 spiffsgen.py --page-size 256 --block-size 8192 --no-magic-len --aligned-obj-ix-tables --meta-len=0 $((0xFFA000-0x100000)) path/to/files image.bin
-
-            #args = ["--page-size 256","--block-size 8192","--no-magic-len","--aligned-obj-ix-tables","--meta-len=0 $((0xFFA000-0x100000))", path/to/files image.bin]
-
             self.statusbar.showMessage(self.tr("Make SPIFFS bin"))
 
             args = []
-
             args.extend(["spiffsgen.py",
                      "--page-size", "256",
                      "--block-size", "8192",
@@ -495,7 +414,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
     @QtCore.Slot()
 
     def write_config(self, progress, device, path, baudrate=460800):
-
         progress.emit(self.tr('Connecting...'), 0)
         init_baud = min(ESPLoader.ESP_ROM_BAUD, baudrate)
         esp = ESPLoader.detect_chip(device, init_baud, 'default_reset', False)
@@ -510,9 +428,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
 
         imagespiffs = zlib.compress(uncimagespiffs, 0)
 
-        #address = 0x300000
         address = 0x100000
-        #address = 0x0
         blocks = esp.flash_defl_begin(len(uncimagespiffs), len(imagespiffs), address)
 
         seq = 0
@@ -530,7 +446,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
             seq += 1
             written += len(block)
             #print("iteration "+str(seq))
-
 
         t = time.time() - t
 
@@ -721,7 +636,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
     def on_discoveryRefreshButton_clicked(self):
         self.discoveryList.clear()
         self.discovery_start()
-
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
