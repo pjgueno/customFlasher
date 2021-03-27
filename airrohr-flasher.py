@@ -3,6 +3,7 @@
 
 import sys
 import os.path
+import os
 import time
 import tempfile
 import hashlib
@@ -24,8 +25,8 @@ from gui import mainwindow
 from airrohrFlasher.consts import UPDATE_REPOSITORY, ALLOWED_PROTO, \
     PREFERED_PORTS, ROLE_DEVICE, DRIVERS_URL
 
-#import spiffsGen
-#from spiffsGen import spiffsgen
+import spiffsGen
+from spiffsGen import spiffsgen
 #from spiffsgen import _____________
 
 if getattr(sys, 'frozen', False):
@@ -84,6 +85,15 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         self.errorSignal.connect(self.on_work_error)
 
         self.cachedir = tempfile.TemporaryDirectory()
+        self.cachedirjson = tempfile.TemporaryDirectory()
+        self.cachedirspiffs = tempfile.TemporaryDirectory()
+
+        print(self.cachedir.name)
+        print(self.cachedirjson.name)
+        print(self.cachedirspiffs.name)
+
+
+
 
     def show_global_message(self, title, message):
         self.globalMessage.show()
@@ -195,7 +205,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
                 others.append(p)
         return prefered, others
 
-    @QtCore.Slot()
 
     def is_json(self, myjson):
         try:
@@ -206,6 +215,8 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
 
 
         #Credentials saver
+
+    @QtCore.Slot()
 
     def on_wifiButton_clicked(self):
 
@@ -222,9 +233,9 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
             self.statusbar.showMessage(self.tr("No PW type."))
             return
 
-        jsonPart1 = "{\"SOFTWARE_VERSION\":\"NRZ-2020-133\",\"current_lang\":\"FR\",\"wlanssid\":\""
-        jsonPart2 ="\",\"wlanpwd\":\""
-        jsonPart3 ="\",\"www_username\":\"admin\",\"www_password\":\"\",\"fs_ssid\":\"airRohr-2509507\",\"fs_pwd\":\"\",\"www_basicauth_enabled\":false,\"dht_read\":false,\"htu21d_read\":false,\"ppd_read\":false,\"sds_read\":false,\"pms_read\":true,\"hpm_read\":false,\"npm_read\":false,\"sps30_read\":false,\"bmp_read\":false,\"bmx280_read\":true,\"sht3x_read\":false,\"ds18b20_read\":false,\"dnms_read\":false,\"dnms_correction\":\"0.0\",\"temp_correction\":\"0.0\",\"gps_read\":false,\"send2dusti\":true,\"ssl_dusti\":false,\"send2madavi\":true,\"ssl_madavi\":false,\"send2sensemap\":false,\"send2fsapp\":false,\"send2aircms\":false,\"send2csv\":false,\"auto_update\":true,\"use_beta\":false,\"has_display\":false,\"has_sh1106\":false,\"has_flipped_display\":false,\"has_lcd1602\":false,\"has_lcd1602_27\":true,\"has_lcd2004\":false,\"has_lcd2004_27\":false,\"display_wifi_info\":true,\"display_device_info\":true,\"debug\":3,\"sending_intervall_ms\":145000,\"time_for_wifi_config\":600000,\"senseboxid\":\"\",\"send2custom\":false,\"host_custom\":\"192.168.234.1\",\"url_custom\":\"/data.php\",\"port_custom\":80,\"user_custom\":\"\",\"pwd_custom\":\"\",\"ssl_custom\":false,\"send2influx\":false,\"host_influx\":\"influx.server\",\"url_influx\":\"/write?db=sensorcommunity\",\"port_influx\":8086,\"user_influx\":\"\",\"pwd_influx\":\"\",\"measurement_name_influx\":\"feinstaub\",\"ssl_influx\":false}"
+        jsonPart1 = '{"SOFTWARE_VERSION":"NRZ-2020-133","current_lang":"FR","wlanssid":"'
+        jsonPart2 = '","wlanpwd":"'
+        jsonPart3 = '","www_username":"admin","www_password":"","fs_ssid":"airRohr-2509507","fs_pwd":"","www_basicauth_enabled":false,"dht_read":false,"htu21d_read":false,"ppd_read":false,"sds_read":false,"pms_read":true,"hpm_read":false,"npm_read":false,"sps30_read":false,"bmp_read":false,"bmx280_read":true,"sht3x_read":false,"ds18b20_read":false,"dnms_read":false,"dnms_correction":"0.0","temp_correction":"0.0","gps_read":false,"send2dusti":true,"ssl_dusti":false,"send2madavi":true,"ssl_madavi":false,"send2sensemap":false,"send2fsapp":false,"send2aircms":false,"send2csv":false,"auto_update":true,"use_beta":false,"has_display":false,"has_sh1106":false,"has_flipped_display":false,"has_lcd1602":false,"has_lcd1602_27":true,"has_lcd2004":false,"has_lcd2004_27":false,"display_wifi_info":true,"display_device_info":true,"debug":3,"sending_intervall_ms":145000,"time_for_wifi_config":600000,"senseboxid":"","send2custom":false,"host_custom":"192.168.234.1","url_custom":"/data.php","port_custom":80,"user_custom":"","pwd_custom":"","ssl_custom":false,"send2influx":false,"host_influx":"influx.server","url_influx":"/write?db=sensorcommunity","port_influx":8086,"user_influx":"","pwd_influx":"","measurement_name_influx":"feinstaub","ssl_influx":false}'
         jsonTest = jsonPart1 + ssid + jsonPart2 + pw + jsonPart3
         
         if not self.is_json(jsonTest):
@@ -233,9 +244,40 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         else:
             self.jsonFinal = jsonPart1 + ssid + jsonPart2 + pw + jsonPart3
             self.statusbar.showMessage(self.tr("Created valid json."))
-            #print(self.jsonFinal)
-            self.spiffsBinary = ''.join(format(i, '08b') for i in bytearray(self.jsonFinal, encoding ='utf-8'))
-            #print(self.spiffsBinary)
+            print(self.jsonFinal)
+            
+            #self.cachedirspiffs = tempfile.TemporaryDirectory()
+
+            self.statusbar.showMessage(self.tr("Opening temporary json directory."))
+
+            jsonfile = open(self.cachedirjson.name + "/config.json", "w")
+            self.statusbar.showMessage(self.tr("Write json in temporay json directory."))
+            jsonfile.write(self.jsonFinal)
+            jsonfile.close()
+
+            #self.cachedirspiffs = tempfile.TemporaryDirectory()
+
+            #python3 spiffsgen.py --page-size 256 --block-size 8192 --no-magic-len --aligned-obj-ix-tables --meta-len=0 $((0xFFA000-0x100000)) path/to/files image.bin
+
+            #args = ["--page-size 256","--block-size 8192","--no-magic-len","--aligned-obj-ix-tables","--meta-len=0 $((0xFFA000-0x100000))", path/to/files image.bin]
+
+            self.statusbar.showMessage(self.tr("Make SPIFFS bin"))
+
+            args = []
+
+            args.extend(["spiffsgen.py",
+                     "--page-size", "256",
+                     "--block-size", "8192",
+                     "--meta-len=0", "0x100000"])
+
+            args.append("--no-magic-len")
+            args.append("--aligned-obj-ix-tables")
+  
+            args.extend([self.cachedirjson.name, self.cachedirspiffs.name + "/spiffs.bin"])
+
+            sys.argv = args
+            spiffsgen.main()
+            self.statusbar.showMessage(self.tr("spiffs.bin done!"))
 
             self.statusbar.clearMessage()
             device = self.boardBox.currentData(ROLE_DEVICE)
@@ -243,24 +285,11 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
             if not device:
                 self.statusbar.showMessage(self.tr("No device selected."))
                 return
-
-            # if self.write_config.running():
-            #     self.statusbar.showMessage(self.tr("Write config in progress..."))
-            #     return
-
-            # self.write_config(self.uploadProgress, device, self.spiffsBinary,
-            #                  error=self.errorSignal)
             
-            self.write_config(self.uploadProgress, device, self.spiffsBinary)
-
-            #python spiffsgen.py <image_size> <base_dir> <output_file>.
+            self.write_config(self.uploadProgress, device, self.cachedirspiffs.name + "/spiffs.bin")
 
 
-        #Config writer
-
-    def write_config(self, progress, device, spiffs, baudrate=460800):
-
-        #spiffs = self.cache_download(progress, spiffs)
+    def write_config(self, progress, device, path, baudrate=460800):
 
         progress.emit(self.tr('Connecting...'), 0)
         init_baud = min(ESPLoader.ESP_ROM_BAUD, baudrate)
@@ -277,12 +306,16 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         #with open(spiffs, 'rb') as fd:
             #uncimagespiffs = fd.read()
 
-        #image = zlib.compress(spiffs, 9)
-        image = zlib.compress(bytes(spiffs, 'utf-8'), 9)
+
+        with open(path, 'rb') as fd:
+            uncimagespiffs = fd.read()
+
+        imagespiffs = zlib.compress(uncimagespiffs, 0)
 
         address = 0x300000
-        #address = 0x80000
-        blocks = esp.flash_defl_begin(len(spiffs), len(image), address)
+        #address = 0x0
+        blocks = esp.flash_defl_begin(len(uncimagespiffs), len(imagespiffs), address)
+
 
             # ( '.menu.ESPModule.ESP12.build.spiffs_start', '0x300000' ),
             # ( '.menu.ESPModule.ESP12.build.spiffs_end', '0x3FB000' ),
@@ -293,17 +326,20 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         seq = 0
         written = 0
         t = time.time()
-        while len(image) > 0:
+        while len(imagespiffs) > 0:
             current_addr = address + seq * esp.FLASH_WRITE_SIZE
             progress.emit(self.tr('Writing at 0x{address:08x}...').format(
                           address=current_addr),
                           100 * (seq + 1) // blocks)
 
-            block = image[0:esp.FLASH_WRITE_SIZE]
+            block = imagespiffs[0:esp.FLASH_WRITE_SIZE]
             esp.flash_defl_block(block, seq, timeout=3.0)
-            image = image[esp.FLASH_WRITE_SIZE:]
+            imagespiffs = imagespiffs[esp.FLASH_WRITE_SIZE:]
             seq += 1
             written += len(block)
+            #print("iteration "+str(seq))
+
+
         t = time.time() - t
 
         progress.emit(self.tr(
@@ -312,15 +348,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
 
         esp.flash_finish(True)
 
-
-
-
-
-
-
-
-
-
+    @QtCore.Slot()
     def on_uploadButton_clicked(self):
         self.statusbar.clearMessage()
 
@@ -367,6 +395,8 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         cache_fname = os.path.join(
             self.cachedir.name,
             hashlib.sha256(binary_uri.encode('utf-8')).hexdigest())
+        
+        #print(self.cachedir)
 
         if os.path.exists(cache_fname):
             return cache_fname
