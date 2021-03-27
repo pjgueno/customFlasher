@@ -5,7 +5,7 @@
 
 spiffsgen.py added and kindly modified by @DeeKey
 
-![Modified GUI](images/modified_GUI.png)
+![Modified GUI](images/modified_GUI2.png)
 
 config.json example:
 
