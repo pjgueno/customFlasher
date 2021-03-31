@@ -91,7 +91,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         print(self.cachedirjson.name)
         print(self.cachedirspiffs.name)
 
-        self.sensorsList = ["SDS011","BME280"]
+        self.sensorsList = ["SDS011","BME280","DHT22"]
         self.populate_sensors1(self.sensorsList)
         self.populate_sensors2(self.sensorsList)
 
@@ -364,7 +364,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         self.switcher(sensor2)
 
         self.configjson['wlanssid'] = ssid
-        self.configjson['wlanpw'] = pw
+        self.configjson['wlanpwd'] = pw
 
         jsonTest = json.dumps(self.configjson)
         
