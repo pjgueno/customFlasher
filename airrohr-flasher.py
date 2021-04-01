@@ -232,7 +232,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         if not pw:
             self.statusbar.showMessage(self.tr("No PW type."))
             return
-
+        esp = ESPLoader.detect_chip(self.boardBox.currentData(ROLE_DEVICE), min(ESPLoader.ESP_ROM_BAUD, 460800), 'default_reset', False)
         jsonPart1 = '{"SOFTWARE_VERSION":"NRZ-2020-133","current_lang":"EN","wlanssid":"'
         jsonPart2 = '","wlanpwd":"'
         jsonPart3 = '","www_username":"admin","www_password":"","fs_ssid":"'
