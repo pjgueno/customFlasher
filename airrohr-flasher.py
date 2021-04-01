@@ -91,12 +91,15 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         print(self.cachedirjson.name)
         print(self.cachedirspiffs.name)
 
-        self.sensorsList = ["SDS011","BME280","DHT22"]
+        self.sensorsList = ["SDS011", "BME280", "DHT22"]
+        self.languagesList = ["EN","FR","DE"]
         self.populate_sensors1(self.sensorsList)
         self.populate_sensors2(self.sensorsList)
+        self.populate_languages(self.languagesList)
 
         self.sensor1Box.setCurrentIndex(0)
         self.sensor2Box.setCurrentIndex(1)
+        self.languageBox.setCurrentIndex(0)
 
         self.customName.setPlaceholderText("Default = airRohr")
 
@@ -238,6 +241,12 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
             item = QtGui.QStandardItem(sensor)
             #item.setData(UPDATE_REPOSITORY + fname, ROLE_DEVICE)
             self.sensor2Box.model().appendRow(item)
+    
+    def populate_languages(self, languages):
+        for language in languages:
+            item = QtGui.QStandardItem(language)
+            #item.setData(UPDATE_REPOSITORY + fname, ROLE_DEVICE)
+            self.languageBox.model().appendRow(item)
 
     def populate_boards(self, ports):
         """Populates board selection combobox from list of pyserial
@@ -334,13 +343,18 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
     @QtCore.Slot()
     def on_wifiButton_clicked(self):
         self.statusbar.clearMessage()
-        configstring = '{"SOFTWARE_VERSION":"NRZ-2020-133","current_lang":"EN","wlanssid":"","wlanpwd":"","www_username":"admin","www_password":"","fs_ssid":"","fs_pwd":"","www_basicauth_enabled":false,"dht_read":false,"htu21d_read":false,"ppd_read":false,"sds_read":false,"pms_read":false,"hpm_read":false,"npm_read":false,"sps30_read":false,"bmp_read":false,"bmx280_read":false,"sht3x_read":false,"ds18b20_read":false,"dnms_read":false,"dnms_correction":"0.0","temp_correction":"0.0","gps_read":false,"send2dusti":true,"ssl_dusti":false,"send2madavi":true,"ssl_madavi":false,"send2sensemap":false,"send2fsapp":false,"send2aircms":false,"send2csv":false,"auto_update":true,"use_beta":false,"has_display":false,"has_sh1106":false,"has_flipped_display":false,"has_lcd1602":false,"has_lcd1602_27":false,"has_lcd2004":false,"has_lcd2004_27":false,"display_wifi_info":true,"display_device_info":true,"debug":3,"sending_intervall_ms":145000,"time_for_wifi_config":600000,"senseboxid":"","send2custom":false,"host_custom":"192.168.234.1","url_custom":"/data.php","port_custom":80,"user_custom":"","pwd_custom":"","ssl_custom":false,"send2influx":false,"host_influx":"influx.server","url_influx":"/write?db=sensorcommunity","port_influx":8086,"user_influx":"","pwd_influx":"","measurement_name_influx":"feinstaub","ssl_influx":false}'
+        configstring = '{"SOFTWARE_VERSION":"NRZ-2020-133","current_lang":"","wlanssid":"","wlanpwd":"","www_username":"admin","www_password":"","fs_ssid":"","fs_pwd":"","www_basicauth_enabled":false,"dht_read":false,"htu21d_read":false,"ppd_read":false,"sds_read":false,"pms_read":false,"hpm_read":false,"npm_read":false,"sps30_read":false,"bmp_read":false,"bmx280_read":false,"sht3x_read":false,"ds18b20_read":false,"dnms_read":false,"dnms_correction":"0.0","temp_correction":"0.0","gps_read":false,"send2dusti":true,"ssl_dusti":false,"send2madavi":true,"ssl_madavi":false,"send2sensemap":false,"send2fsapp":false,"send2aircms":false,"send2csv":false,"auto_update":true,"use_beta":false,"has_display":false,"has_sh1106":false,"has_flipped_display":false,"has_lcd1602":false,"has_lcd1602_27":false,"has_lcd2004":false,"has_lcd2004_27":false,"display_wifi_info":true,"display_device_info":true,"debug":3,"sending_intervall_ms":145000,"time_for_wifi_config":600000,"senseboxid":"","send2custom":false,"host_custom":"192.168.234.1","url_custom":"/data.php","port_custom":80,"user_custom":"","pwd_custom":"","ssl_custom":false,"send2influx":false,"host_influx":"influx.server","url_influx":"/write?db=sensorcommunity","port_influx":8086,"user_influx":"","pwd_influx":"","measurement_name_influx":"feinstaub","ssl_influx":false}'
         self.configjson = json.loads(configstring)
         ssid = self.wifiSSID.text()
         pw = self.wifiPW.text()
         apssid = self.customName.text()
         sensor1 = self.sensorsList[self.sensor1Box.currentIndex()]
-        sensor2 = self.sensorsList[self.sensor2Box.currentIndex()] 
+        sensor2 = self.sensorsList[self.sensor2Box.currentIndex()]
+        language = self.languagesList[self.languageBox.currentIndex()]
+
+        if language not in self.languagesList:
+            self.statusbar.showMessage(self.tr("Invalid language."))
+            return
 
         if not ssid:
             self.statusbar.showMessage(self.tr("No SSID typed."))
@@ -366,6 +380,8 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
 
         self.configjson['wlanssid'] = ssid
         self.configjson['wlanpwd'] = pw
+        self.configjson['current_lang'] = language
+        
 
         jsonTest = json.dumps(self.configjson)
         
