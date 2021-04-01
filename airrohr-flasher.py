@@ -217,7 +217,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         #Credentials saver
 
     @QtCore.Slot()
-
     def on_wifiButton_clicked(self):
 
         self.statusbar.clearMessage()
@@ -287,9 +286,13 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
                 self.statusbar.showMessage(self.tr("No device selected."))
                 return
             
-            self.write_config(self.uploadProgress, device, self.cachedirspiffs.name + "/spiffs.bin")
+            if self.write_config.running():
+                self.statusbar.showMessage(self.tr("Work in progess..."))
+                return
 
-
+            self.write_config(self.uploadProgress, device, self.cachedirspiffs.name + "/spiffs.bin", error=self.errorSignal)
+            
+    @QuickThread.wrap
     def write_config(self, progress, device, path, baudrate=460800):
 
         progress.emit(self.tr('Connecting...'), 0)
@@ -325,8 +328,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
             imagespiffs = imagespiffs[esp.FLASH_WRITE_SIZE:]
             seq += 1
             written += len(block)
-            #print("iteration "+str(seq))
-
 
         t = time.time() - t
 
@@ -384,8 +385,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
             self.cachedir.name,
             hashlib.sha256(binary_uri.encode('utf-8')).hexdigest())
         
-        #print(self.cachedir)
-
         if os.path.exists(cache_fname):
             return cache_fname
 
