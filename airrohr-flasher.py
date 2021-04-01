@@ -376,9 +376,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
             self.jsonFinal = json.dumps(self.configjson)
             self.statusbar.showMessage(self.tr("Created valid json."))
             print(self.jsonFinal)
-            
-            #self.cachedirspiffs = tempfile.TemporaryDirectory()
-
+        
             self.statusbar.showMessage(self.tr("Opening temporary json directory."))
 
             jsonfile = open(self.cachedirjson.name + "/config.json", "w")
@@ -409,13 +407,18 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
             if not device:
                 self.statusbar.showMessage(self.tr("No device selected."))
                 return
+
+            if self.write_config.running():
+                self.statusbar.showMessage(self.tr("Work in progess..."))
+                return
             
-            self.write_config(self.uploadProgress, device, self.cachedirspiffs.name + "/spiffs.bin")
+            self.write_config(self.uploadProgress, device, self.cachedirspiffs.name + "/spiffs.bin", error=self.errorSignal)
 
-    @QtCore.Slot()
-
+    @QuickThread.wrap
     def write_config(self, progress, device, path, baudrate=460800):
+
         progress.emit(self.tr('Connecting...'), 0)
+
         init_baud = min(ESPLoader.ESP_ROM_BAUD, baudrate)
         esp = ESPLoader.detect_chip(device, init_baud, 'default_reset', False)
 
@@ -436,6 +439,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         written = 0
         t = time.time()
         while len(imagespiffs) > 0:
+
             current_addr = address + seq * esp.FLASH_WRITE_SIZE
             progress.emit(self.tr('Writing at 0x{address:08x}...').format(
                           address=current_addr),
