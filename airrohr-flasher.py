@@ -108,6 +108,8 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
 
         self.configjson = json.loads('{}')
         self.sensorID = 0
+        self.customNameSave = ""
+        
 
         # String		current_lang
         # String		wlanssid
@@ -373,6 +375,7 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
             print(self.configjson['fs_ssid'])
         else:
             self.configjson['fs_ssid'] = apssid + "-" + str(self.sensorID)
+            self.customNameSave = apssid
             print(self.configjson['fs_ssid'])        
 
         self.switcher(sensor1)
@@ -641,13 +644,14 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
 
     def on_zeroconf_discovered(self, name, address, info):
         """Called on every zeroconf discovered device"""
-        if (name.lower().startswith('feinstaubsensor')
-                or name.lower().startswith('nam')
-                or name.lower().startswith('smogomierz')
-                or name.lower().startswith('airrohr')):
-            item = QtWidgets.QListWidgetItem('{}: {}'.format(address, name.split('.')[0]))
-            item.setData(ROLE_DEVICE, 'http://{}:{}'.format(address, info.port))
-            self.discoveryList.addItem(item)
+        # if (name.lower().startswith('feinstaubsensor')
+        #         or name.lower().startswith('nam')
+        #         or name.lower().startswith('smogomierz')
+        #         or name.lower().startswith('airrohr')
+        #         or name.lower().startswith(self.customNameSave)):
+        item = QtWidgets.QListWidgetItem('{}: {}'.format(address, name.split('.')[0]))
+        item.setData(ROLE_DEVICE, 'http://{}:{}'.format(address, info.port))
+        self.discoveryList.addItem(item)
 
     @QtCore.Slot(QtWidgets.QListWidgetItem)
     def on_discoveryList_itemDoubleClicked(self, index):
