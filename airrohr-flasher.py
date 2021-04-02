@@ -276,8 +276,6 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
                             'the drivers</a>?').format(drivers_url=DRIVERS_URL))
         else:
             self.globalMessage.hide()
-            esp = ESPLoader.detect_chip(self.boardBox.currentData(ROLE_DEVICE), min(ESPLoader.ESP_ROM_BAUD, 460800), 'default_reset', False)
-            self.sensorID = esp.chip_id()
             self.boards_detected = True
 
         if others:
@@ -351,6 +349,8 @@ class MainWindow(QtWidgets.QMainWindow, mainwindow.Ui_MainWindow):
         sensor1 = self.sensorsList[self.sensor1Box.currentIndex()]
         sensor2 = self.sensorsList[self.sensor2Box.currentIndex()]
         language = self.languagesList[self.languageBox.currentIndex()]
+        esp = ESPLoader.detect_chip(self.boardBox.currentData(ROLE_DEVICE), min(ESPLoader.ESP_ROM_BAUD, 460800), 'default_reset', False)
+        self.sensorID = esp.chip_id()
 
         if language not in self.languagesList:
             self.statusbar.showMessage(self.tr("Invalid language."))
